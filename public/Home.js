@@ -1,6 +1,14 @@
 document.addEventListener("DOMContentLoaded", (event) => {
   fetch("/api/courses")
-    .then((response) => response.json())
+    .then((response) =>{
+      if(response.status !== 200){
+        error();
+        return;
+      }else{
+        return response.json()
+      }
+      
+    } )
     .then((courses) => {
       const container = document.querySelector(".Classes");
       courses.forEach((course) => {
@@ -92,4 +100,10 @@ function displayNotes(notes) {
     noteElement.textContent = note.name;
     notesSection.appendChild(noteElement);
   });
+}
+
+function error(){
+  const errorDiv = document.getElementById("error");
+  errorDiv.textContent = "Error loading courses. Please try again later.";
+  errorDiv.style.display = "flex";
 }

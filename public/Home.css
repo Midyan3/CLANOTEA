@@ -214,3 +214,38 @@ video {
     }
 }
 
+@keyframes gentleShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.Fetch-failed {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; /* A cleaner, friendly font */
+    background: #ffe6e6;                 /* A light red background to hint the error */
+    border-radius: 8px;                  /* Rounded corners soften the look */
+    padding: 20px;                       /* More padding for a spacious feel */
+    text-align: center;
+    font-size: 32px;                     /* Slightly smaller size so it's not too bold */
+    font-weight: semi-bold;
+    color: #b34242;                      /* Retain the error red for text but in a toned manner */
+    margin-bottom: 10px;
+    animation: fadeInUp 0.5s ease-in-out, gentleShake 0.6s ease;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* A soft shadow for depth */
+}
+
+.Fetch-failed:hover {
+    transform: scale(1.05) rotate(-2deg); /* Reduced the rotation for a less drastic hover effect */
+    background: #fff5f5;                  /* A light red background on hover to hint the error */
+}
+
+.Fetch-failed:before {                    /* An 'error' icon to represent the error visually */
+    content: "⚠️";                       /* Unicode warning sign */
+    font-size: 1.2em;
+    margin-right: 10px;
+}
