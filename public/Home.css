@@ -22,7 +22,9 @@ body {
 .navbar a:hover {
     background-color: #ddd;
     color: black;
+    transform: translateY(-5px); /* This will move the item up slightly */
 }
+
 
 .account {
     display: flex; /* Makes .account a flex container too */
@@ -41,7 +43,12 @@ body {
     background-color: #ddd;
     color: black;
 }
-
+.Classes{
+    display: flex;
+    flex-direction: row;
+    padding-left: 20px;
+    justify-content: space-between;
+}
 .container {
     padding: 20px;
     background-color: #ffffff;
@@ -66,26 +73,36 @@ h2 {
     margin-bottom: 10px;
 }
 
-
+.card span{
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
 .card {
+    
     display: block;
     padding: 10px;
-    background-color: #fff;
-    margin: 10px 0;
+    background-color: #c4c4c4;
+    margin: 100px 0;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: 0.3s;
     text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
 }
 
-.card:hover {
+.card:hover, .week-card:hover {
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    transform: scale(1.05) rotate(-2deg); /* Slight enlargement and rotation */
 }
+
 
 .week-card{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -96,11 +113,7 @@ h2 {
     transition: 0.3s;
     text-align: center;
 }
-.week-card:hover {
-    box-shadow: 0 8px 12px rgba(102, 84, 84, 0.1);
-    color: #2196F3;
-    cursor: pointer;
-}
+
 /* Basic reset for the video to prevent default border and spacing */
 /* Reset for the video */
 video {
@@ -131,9 +144,9 @@ video {
 
 /* A slight upward lift and enlargement on hover */
 .video-container:hover {
+    background: linear-gradient(135deg, #d6d9f5, #52545a);
     transform: translateY(-10px) rotate(-1deg) scale(1.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
-    /* No need to change width and height as the scale property will handle it */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 /* Subtle shadow for depth, more pronounced on hover */
@@ -144,6 +157,9 @@ video {
 .video-container:hover, .video-container:hover .play-button, .video-container:hover .video-title {
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
+.navbar a, .card, .week-card, .video-container {
+    transition: all 0.3s ease-out; 
+}
 
 .play-button {
     display: none;
@@ -153,7 +169,7 @@ video {
     transform: translate(-50%, -50%);
     font-size: 2em;
     color: #FFF;
-    text-shadow: 2px 2px 5px rgba(228, 230, 230, 0.5);
+    background-color: transparent;
 }
 
 /* Play button becomes visible on hover */
@@ -179,3 +195,22 @@ video {
 .video-container:hover .video-title {
     transform: translateY(0);
 }
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 300px; /* You can set this to whatever width you desire. */
+    height: 169px; /* Height calculated to maintain a 16:9 aspect ratio. Adjust as needed. */
+    overflow: hidden; /* This ensures that if the video is bigger than the container, it won't overflow. */
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

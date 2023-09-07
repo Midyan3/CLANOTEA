@@ -6,15 +6,16 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const Dropbox = require('dropbox');
 const axios = require('axios');
+require('dotenv').config();
 
 // Constants and configurations
 const PORT = 3000;
-const BASE_PATH = "/fall 2023-2024 semester classes";
-const ACCESS_TOKEN = 'sl.BlkZ5OL_jPzRKs9E2WsQEIeg7AVpPwkfep_QItiFh0M4kIN05fWfBIIOuglkYi4pswpFs5_eUiA23EszTiSk5Zs5v_bJH-DZfGWS6e8hjuQyYS6-OCVTZEnyIX62rg2FtzppsZeZYlKgQgkmsFuSm6A'; // Remember to keep this secret and safe
-
+const BASE_PATH = process.env.BASE_PATH;
+const ACCESS_TOKEN = process.env.API_KEY;
+console.log(process.env.API_KEY);
 
 const app = express();
-
+app.use('/uploads', express.static('uploads'));
 
 if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
@@ -71,6 +72,7 @@ app.get('/api/courses', async (req, res) => {
       const courses = await fetchCourses();
       res.json(courses.result.entries);
   } catch (error) {
+    console.error("Error getting courses:", error);
       res.status(500).json({ error: error.message });
   }
 });
@@ -102,7 +104,7 @@ app.get('/api/courses/:courseName/weeks/:weekName/content', async (req, res) => 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
-    secret: '0a2c3e1f7c6b52940c47ee1a87259c9a34911f3749d0ebfe07c5b6e902f4d8bf',
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false
 }));
@@ -255,32 +257,38 @@ app.listen(PORT, () => {
 });
 
 app.get('/GetVideo', async (req, res) => {
-  const path = req.query.path;
-  const apiUrl = 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
+    const path = req.query.path;
+    const apiUrl = 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
+    console.log("Path:", path);
+    try {
+        const response = await axios.post(apiUrl, {
+            path: path,
+        }, {
+            headers: {
+                'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
 
-  try {
-      const response = await axios.post(apiUrl, {
-          path: path,
-      }, {
-          headers: {
-              'Authorization': `Bearer ${ACCESS_TOKEN}`,
-              'Content-Type': 'application/json',
-          },
-      });
-
-      if (response.data && response.data.url) {
-          const originalUrl = response.data.url;
-          const modifiedUrl = originalUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
-          return res.json({url: modifiedUrl});
-      }
-  } catch (error) {
-      console.error("Error getting shared link:", error.response.data);
-      return res.status(500).json({ message: 'An error occurred' });
-  }
+        if (response.data && response.data.url) {
+            const originalUrl = response.data.url;
+            const modifiedUrl = originalUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
+            return res.json({url: modifiedUrl});
+        }
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.error_summary && error.response.data.error_summary.startsWith("shared_link_already_exists")) {
+            const existingLink = error.response.data.error.shared_link_already_exists.metadata.url;
+            console.log("Existing shared link:", existingLink);
+            const modifiedExistingLink = existingLink.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
+            return res.json({url: modifiedExistingLink});
+        }
+        console.error("Error getting shared link:", error.response.data);
+        return res.status(500).json({ message: 'An error occurred' });
+    }
 });
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://midyan:Midyan2003@cluster0.ntjjym3.mongodb.net/', {
+mongoose.connect(process.env.MONGOL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

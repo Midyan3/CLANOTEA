@@ -20,22 +20,22 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s ease; /* Transition effect for all changes */
+    transition: all 0.3s ease; 
     font-family: 'Courier New', Courier, monospace;
   }
   .submit:hover {
-    background-color: #c0cbd7; /* Darker blue on hover */
+    background-color: #c0cbd7; 
     color: #fff;
-    transform: scale(1.1); /* Makes the button grow */
-    box-shadow: 0 0 15px #6d7378; /* Adds a glow effect */
+    transform: scale(1.1); 
+    box-shadow: 0 0 15px #6d7378; 
   }
   input[type="password"] {
-    width: 200px; /* Specifies the width */
+    width: 200px; 
     border: none;
     background-color: transparent;
     border-bottom: 2px solid #333;
     padding: 5px;
-    margin-bottom: 10px; /* Adds some space at the bottom */
+    margin-bottom: 10px; 
   }
     
   @keyframes glowAnimation {
@@ -59,16 +59,15 @@ body {
   letter-spacing: 5px;
   user-select: none;
   cursor: pointer;
-  transition: letter-spacing 0.3s ease; /* transition for a cool effect */
+  transition: letter-spacing 0.3s ease; 
 }
 
-/* Increased letter-spacing on hover for a simple cool effect */
 .head:hover {
   letter-spacing: 7px;
 }
 .head:hover {
-    transform: scale(1.1); /* Zoom in a bit on hover */
-    animation-duration: 0.75s; /* Speed up the glow animation */
+    transform: scale(1.1); 
+    animation-duration: 0.75s; 
 }
 
 
@@ -155,4 +154,9 @@ body {
 
 .card, .Approve, .Reject {
   animation: fadeInUp 0.5s forwards;
+}
+.judgement{
+  border: #413333 solid 3px;
+  height: 300px;
+  width: 300px;
 }
