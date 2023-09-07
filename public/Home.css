@@ -1,0 +1,181 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+.navbar {
+    background-color: #ffffff;
+    overflow: hidden;
+    display: flex; /* Makes .navbar a flex container */
+}
+
+.navbar a {
+    display: block;
+    color: #333333;
+    text-align: center;
+    padding: 14px 16px; /* Adjusted padding here */
+    text-decoration: none;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.account {
+    display: flex; /* Makes .account a flex container too */
+    margin-left: auto; /* This pushes the .account to the right */
+}
+
+.account a {
+    color: #333333;
+    text-align: center;
+    padding: 14px 16px; /* Adjusted padding here */
+    text-decoration: none;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.account a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.container {
+    padding: 20px;
+    background-color: #ffffff;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.section {
+    margin-top: 20px;
+}
+
+h2 {
+    color: #333333;
+}
+
+.note{
+    background-color: aliceblue;
+    border-left: 4px solid #2196F3;
+    margin-bottom: 10px;
+}
+
+
+.card {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    text-align: center;
+}
+
+.card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.week-card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #d8d8d8;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(14, 13, 13, 0.1);
+    transition: 0.3s;
+    text-align: center;
+}
+.week-card:hover {
+    box-shadow: 0 8px 12px rgba(102, 84, 84, 0.1);
+    color: #2196F3;
+    cursor: pointer;
+}
+/* Basic reset for the video to prevent default border and spacing */
+/* Reset for the video */
+video {
+    margin: 0;
+    border: none;
+    padding: 0;
+    vertical-align: middle;
+    transition: transform 0.5s ease-in-out; /* Only transforming the scale, better performance */
+    width: 100%; /* Make sure the video always fits its container */
+    border-radius: 10px; /* Rounded edges for video, like the container */
+}
+
+.video-container {
+    position: relative;
+    width: 125px;
+    height: 200px;
+    border-radius: 10px;
+    display: inline-block; /* To allow multiple video cards side by side */
+    overflow: hidden; /* Ensure that nothing goes outside of the rounded edges */
+    background: linear-gradient(135deg, #eef1f9, #444549);
+    cursor: pointer;
+    transition: transform 0.5s ease-in-out; /* Transform transition for hover */
+    transform-origin: center bottom; /* Anchor the zooming to the bottom of the card */
+    margin: 15px; /* Space around each video card */
+    transition: transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000), box-shadow 0.6s ease; 
+}
+
+
+/* A slight upward lift and enlargement on hover */
+.video-container:hover {
+    transform: translateY(-10px) rotate(-1deg) scale(1.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
+    /* No need to change width and height as the scale property will handle it */
+}
+
+/* Subtle shadow for depth, more pronounced on hover */
+.video-container, .play-button, .video-title {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.video-container:hover, .video-container:hover .play-button, .video-container:hover .video-title {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.play-button {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    color: #FFF;
+    text-shadow: 2px 2px 5px rgba(228, 230, 230, 0.5);
+}
+
+/* Play button becomes visible on hover */
+.video-container:hover .play-button {
+    display: block;
+}
+
+.video-title {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFF;
+    border-left: 4px solid #aeb0b2;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+/* Slide up the video title on hover */
+.video-container:hover .video-title {
+    transform: translateY(0);
+}

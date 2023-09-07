@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunter College Lecture Portal</title>
+  <link rel="stylesheet" href="./Web.css">
+</head>
+<body>
+  <main>
+
+    <nav>
+      <a href="Home.html" class="nav-link">Home</a>
+      <a href="Login.html" class="nav-link">Login</a>
+      <a href="#" class="nav-link">Register</a>
+      <a href="#" class="nav-link">Contact</a>
+    </nav>
+    <form class="container" action="/register" method="post" enctype="multipart/form-data">
+      <div class="login">
+        <label>Email:</label>
+        <input type="email" id="email" placeholder="Enter your Hunter College email" pattern="[a-zA-Z0-9._%+-]+@hunter.cuny.edu">
+        <div class="error-message" id="email-error"></div>
+    </div>
+      <div class="login">
+        <label>Password:</label> 
+        <ul class = "passReq">
+            <li>At least one uppercase letter</li>
+            <li>At least one lowercase letter</li>
+            <li>At least one digit</li>
+            <li>At least one special character</li>
+            <li>At least 8 characters long</li>
+
+          </ul>  
+        <input type="password" placeholder="Enter your password">
+        <div class="error-message" id="password-error"></div>
+      </div>
+      <div class="login">
+        <label>Upload ID:</label>
+        <input type="file" id="idImage" name="idImage" accept="image/*">
+        <div class="error-message" id="file-error"></div>
+      </div>
+      <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+        <div class="loading-bar-percentage">0%</div>
+    </div>
+      <button type="submit" class="submit-button">Register</button>
+      <div class="error-message" id="Account-error"></div>
+    </form>
+  </main>
+  <script src="Web.js"></script>
+  <footer>
+    <div class = "Info">
+      Please Make Sure Your ID Is Valid And Your Email Is Correct
+ </div>
+</footer> 
+</body>
+
+</html>

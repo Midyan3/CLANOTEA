@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hunter College Lecture Login</title>
+    <link rel="stylesheet" href="./login.css">
+</head>
+
+<body>
+    <div class="header">CLANOTA</div>
+    <main>
+        <form class="container" action="/login" method="post">
+            <div class="login">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your Hunter College email" required pattern="[a-zA-Z0-9._%+-]+@hunter.cuny.edu">
+            </div>
+            <div class="login">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="error-message" style="display: none;">
+                <span>&times;</span> Incorrect password or email
+            </div>
+
+            <button type="submit" class="submit-button">Login</button>
+        </form>
+        <div class="login-animation">Logging in...</div>
+</div>
+
+        <label class="NoAcc">Don't have an account? <a href="/Web.html" class="nav-link">Register</a></label>
+    </main>
+    <script src="login.js"></script>
+</body>
+
+</html>

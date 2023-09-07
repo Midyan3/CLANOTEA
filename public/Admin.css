@@ -1,0 +1,158 @@
+body {
+  background-image: linear-gradient(135deg, #cecdcd 0%, #f9f9f9 100%);
+    padding: 100px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: #333 solid 3px;
+    color: #333;
+    margin-top: 200px;
+  }
+
+  .submit {
+    background-color: #34383c;
+    color: white;
+    padding: 7px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transition effect for all changes */
+    font-family: 'Courier New', Courier, monospace;
+  }
+  .submit:hover {
+    background-color: #c0cbd7; /* Darker blue on hover */
+    color: #fff;
+    transform: scale(1.1); /* Makes the button grow */
+    box-shadow: 0 0 15px #6d7378; /* Adds a glow effect */
+  }
+  input[type="password"] {
+    width: 200px; /* Specifies the width */
+    border: none;
+    background-color: transparent;
+    border-bottom: 2px solid #333;
+    padding: 5px;
+    margin-bottom: 10px; /* Adds some space at the bottom */
+  }
+    
+  @keyframes glowAnimation {
+    0% {
+        text-shadow: 0 0 5px #7c7373, 0 0 10px #7c7373, 0 0 15px #c0cbd7, 0 0 20px #c0cbd7, 0 0 25px #c0cbd7, 0 0 30px #c0cbd7, 0 0 35px #c0cbd7;
+    }
+    40% {
+        text-shadow: 0 0 10px #7c7373, 0 0 15px #7c7373, 0 0 20px #c0cbd7, 0 0 25px #c0cbd7, 0 0 30px #c0cbd7, 0 0 35px #c0cbd7, 0 0 40px #c0cbd7;
+    }
+    100% {
+        text-shadow: 0 0 5px #7c7373, 0 0 10px #7c7373, 0 0 15px #c0cbd7, 0 0 20px #c0cbd7, 0 0 25px #c0cbd7, 0 0 30px #c0cbd7, 0 0 35px #c0cbd7;
+    }
+}
+
+.head {
+  font-size: 40px;
+  position: absolute;
+  top: 0;
+  color: #2f3438;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  user-select: none;
+  cursor: pointer;
+  transition: letter-spacing 0.3s ease; /* transition for a cool effect */
+}
+
+/* Increased letter-spacing on hover for a simple cool effect */
+.head:hover {
+  letter-spacing: 7px;
+}
+.head:hover {
+    transform: scale(1.1); /* Zoom in a bit on hover */
+    animation-duration: 0.75s; /* Speed up the glow animation */
+}
+
+
+  input[type="password"]:focus {
+    outline: none;
+  }
+  input[type="password"]:hover {
+    border-bottom: 2px solid #c0cbd7;
+  
+  }
+
+  .Approve, .Reject {
+    background-color: transparent;
+    border: 2px solid #34383c;  /* border to make them more visible despite transparent background */
+    color: #34383c;
+    padding: 7px 15px;
+    border-radius: 20px; /* Adjust this for more or less curvature */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase; /* Optional: to make text uppercase for a cooler look */
+}
+
+.Approve:hover {
+    background-color: #83d986;  /* Green color on hover */
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);  /* Corresponding green shadow */
+}
+
+.Reject:hover {
+    background-color: #d88686;  /* Red color on hover */
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.7);  /* Corresponding red shadow */
+}
+
+.card{
+  background-color: #ffffff;
+  border: #333333 solid 3px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: #FF3333; /* Vivid red */
+  text-shadow: 0 0 5px #FF3333, 0 0 10px #FF3333, 0 0 15px #FF6666, 0 0 20px #FF6666, 0 0 25px #FF9999, 0 0 30px #FF9999, 0 0 32px #FFCCCC; /* Neon glow effect in shades of red */
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  position: absolute;
+  top: 142px;
+  padding: 10px;
+  border-radius: 8px;
+  
+  background: rgba(0, 0, 0, 0.05); /* Subtle semi-transparent black background to help the text pop */
+  box-shadow: 0 4px 10px rgba(255, 51, 51, 0.2); /* Subtle red shadow */
+  transform: scale(1);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+#error {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+#error.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes fadeInUp {
+  0% {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.card, .Approve, .Reject {
+  animation: fadeInUp 0.5s forwards;
+}
