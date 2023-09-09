@@ -3,7 +3,7 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
   const errorDiv = document.getElementById("error");
   const password = document.getElementById("password").value;
   errorDiv.classList.add("show");
-  if (password === "Admin123") {
+  if (password === "admin") {
     fetch("/getPendingUsers")
       .then((res) => res.json())
       .then((data) => {

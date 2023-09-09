@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Class Resources</title>
+    <link rel="stylesheet" href="Upload.css">
+</head>
+<body>
+    
+    <h1>Upload
+       
+    </h1> 
+    <a herf="Home.html" class="Home">Home</a>
+    
+    <div class="container">
+        <div class="instructions">
+            <h2>Instructions:</h2>
+            <ul>
+                <li>Upload a text file or a video.</li>
+                <li>Choose a week for your upload.</li>
+                <li>Provide a detailed description.</li>
+                <li>All uploads will be verified for appropriateness before being posted.</li>
+            </ul>
+        </div>
+        <form id="uploadForm">
+            <label for="existingClass">Is the class you are uploading for already present?</label>
+            <br>
+            <input type="radio" id="yes" name="existingClass" value="yes" required>
+            <label for="yes" class="radio-label">Yes</label>
+            
+            <input type="radio" id="no" name="existingClass" value="no" required>
+            <label for="no" class="radio-label">No</label>
+            
+            <div id="classDropdown" style="display: none;">
+                <label for="existingClasses">Choose an existing class:</label>
+                <select class="Exist" id="existingClasses" name="existingClasses">
+                    <!-- Add the list of existing classes here -->
+                    <option value="class1">Class 1</option>
+                    <option value="class2">Class 2</option>
+                </select>
+            </div>
+            
+            <div id="classField" style="display: none;">
+                <label for="class">Class:</label>
+                <input type="text" id="class" name="class" placeholder="Enter the new class name">
+            </div>
+
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" placeholder="Enter the title" required>
+            <label for="week">Week:</label>
+            <select id="week" name="week" required>
+                <!-- Add more weeks as needed -->
+            </select>
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" placeholder="Enter the description" required>
+            <label for="file">File:</label>
+            <input type="file" id="file" name="file" required>
+            <button type="submit" class="submit-button">Upload</button>
+        </form>
+        <div class="upload-animation">Uploading...</div>
+    </div>
+    <script src="Upload.js"></script>
+</body>
+</html>

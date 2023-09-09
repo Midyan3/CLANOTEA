@@ -110,3 +110,20 @@ document.body.addEventListener('mousemove', (e) => {
     document.body.style.setProperty('--x-pos', `${xPos}%`);
     document.body.style.setProperty('--y-pos', `${yPos}%`);
   });
+  
+  document.querySelector('.header').addEventListener('mouseover', function(e) {
+    let ripple = document.createElement("span");
+    let rect = e.target.getBoundingClientRect();
+    let size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = e.clientX - rect.left - (size / 2) + 'px';
+    ripple.style.top = e.clientY - rect.top - (size / 2) + 'px';
+    ripple.classList.add('ripple');
+
+    const existingRipples = document.querySelectorAll('.ripple');
+    if (existingRipples.length) {
+      existingRipples[0].remove();
+    }
+
+    e.target.appendChild(ripple);
+});

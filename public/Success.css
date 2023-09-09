@@ -7,59 +7,58 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    font-family: 'Poppins', sans-serif;  /* Use a modern font */
+    font-family: 'Poppins', sans-serif;
 }
 
 h1 {
     position: absolute;
     top: 10px;
     font-size: 40px;
-    color: #34383c; 
+    color: #1d1d1f; 
     border-bottom: #87898b 2px solid;
-    text-shadow: #7c7373 0px 0px 10px;
 }
 
 .success-container {
-    background-color: #34383c;
-    padding: 60px 80px; /* Increased padding for a roomier feel */
-    border-radius: 20px;  /* Slightly larger radius for softer corners */
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-    width: 50%; /* A responsive width */
-    max-width: 500px; /* Maximum width to ensure it doesn't get too large on bigger screens */
+    background-color: #f5f5f7;
+    padding: 60px 80px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 50%;
+    max-width: 500px;
     text-align: center;
 }
 
 .success-title {
     font-size: 42px;
-    color: #ffffff;
-    text-shadow: none; /* Removed text shadow for a cleaner look */
+    color: #1d1d1f;
     margin-bottom: 25px;
-    font-weight: 600; /* Slightly bolder font weight */
+    font-weight: 700; 
 }
 
 .success-description {
     font-size: 18px;
-    color: #c0cbd7; /* Lighter color for contrast */
+    color: #333; 
     margin-bottom: 40px;
-    font-weight: 300; /* Lighter font weight for a more delicate look */
-    line-height: 1.5; /* Increased line height for better readability */
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 .go-home-button {
     background-color: #c0cbd7;
-    color: #34383c; 
-    padding: 15px 30px; /* Larger padding for a more clickable button */
+    color: #1d1d1f;
+    padding: 15px 30px;
     border: none;
-    border-radius: 30px; /* Fully rounded corners */
+    border-radius: 30px;
     cursor: pointer;
     text-decoration: none;
-    font-weight: 500; /* Medium weight for the button text */
-    transition: all 0.3s ease; /* Transition for smooth hover effect */
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .go-home-button:hover {
     background-color: #f9f9f9;
-    color: #34383c;
-    transform: scale(1.05); /* Slight scale to give depth */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for elevation */
+    color: #333;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
