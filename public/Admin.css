@@ -160,3 +160,68 @@ body {
   height: 300px;
   width: 300px;
 }
+.Upload {
+  display: none; 
+  background-color: #34383c;
+  color: white;
+  padding: 8px 16px; /* Reduced padding for a smaller look */
+  border: 2px solid #c0cbd7;
+  border-radius: 20px; /* Reduced radius for a smaller look */
+  font-size: 22px; /* Reduced font size */
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease; 
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 0 0 10px #6d7378;
+  text-transform: uppercase;
+  position: absolute; /* This will position the button relative to its nearest positioned ancestor */
+  right: 20px; /* This will move the button to the right edge, 20px spacing from the right */
+  top: 20px; /* Optional: you can adjust or remove this based on your layout needs */
+}
+
+.Upload:hover {
+  background-color: #c0cbd7; 
+  color: #34383c;
+  border-color: #34383c;
+  transform: scale(1.05); /* Slightly reduced the hover scale effect since the button is now smaller */
+  box-shadow: 0 0 15px #c0cbd7;
+}
+
+
+.Uploads {
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.Uploads p {
+  margin: 0;
+  padding: 0;
+}
+embed {
+  display: block;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+}
+
+video {
+  display: block;
+  max-width: 100%;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+}
+
+a {
+  color: #337ab7;  /* blue */
+  text-decoration: none;
+  margin: 10px 0;
+  display: inline-block;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+

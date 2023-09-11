@@ -7,7 +7,18 @@ const fs = require('fs');
 const Dropbox = require('dropbox');
 const axios = require('axios');
 require('dotenv').config();
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        const now = new Date().toISOString();
+        const date = now.replace(/:/g, '-');  // replace colons with hyphens
+        cb(null, date + file.originalname);
+    }
+});
 
+const upload = multer({ storage: storage });
 // Constants and configurations
 const PORT = 3000;
 const BASE_PATH = process.env.BASE_PATH;
@@ -38,9 +49,16 @@ const PendingUserSchema = new mongoose.Schema({
     filePath: { type: String }
 });
 
-
+const Upload = new mongoose.Schema({
+    ClassName: { type: String, required: true },
+    Title: { type: String, required: true },
+    WeekName: { type: String, required: true },
+    Description :{type: String, required: true},
+    filePath: { type: String, required: true }
+});
 const User = mongoose.model('User', userSchema);
 const PendingUser = mongoose.model('test/PendingUser', PendingUserSchema);
+const Uploads = mongoose.model('Uploads', Upload);
 
 
 // Dropbox utility functions
@@ -97,8 +115,29 @@ app.get('/api/courses/:courseName/weeks/:weekName/content', async (req, res) => 
   }
 });
 
-
-
+app.post('/Upload', upload.single('file'), (req, res) => {
+    try{
+        console.log(req.body);
+        const ClassName = req.body.ClassName;
+        const WeekName = req.body.WeekName || 'Week 1';
+        const description = req.body.description;
+        const Title = req.body.Title;
+        const file = req.file;
+        const filePath = file.path;
+        const upload = new Uploads({
+            ClassName: ClassName,
+            WeekName: WeekName,
+            Description: description,
+            Title: Title,
+            filePath: file.path
+        });
+        upload.save();
+        return res.status(200).json({message: 'File uploaded successfully'});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({message: "Failed to upload. Error: " + error});
+    } 
+});
 
 // Middleware
 app.use(express.json());
@@ -165,6 +204,15 @@ app.get('/image/:filename', (req, res) => {
   });
 });
 
+app.get('/GetUploads', async (req, res) => {
+    try {
+        const uploads = await Uploads.find({});
+        res.json(uploads);
+    } catch (error) {
+        console.error("Error fetching uploads:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 app.post('/approveUser', async (req, res) => {
     const userId = req.body.userId;
     const NewMember = await PendingUser.findOne({ email: userId });
@@ -202,28 +250,56 @@ app.post('/rejectUser', async (req, res) => {
     }
 });
 
+app.post('/approveUpload', async (req, res) => {
+    try {
+        let path = req.body.filePath;
+        console.log(path);
+        const pathRegex = new RegExp("^" + path.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + "$", "i");
+        console.log(pathRegex);
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/');
-    },
-    filename: function (req, file, cb) {
-        const now = new Date().toISOString();
-        const date = now.replace(/:/g, '-');  // replace colons with hyphens
-        cb(null, date + file.originalname);
+        const upload = await Uploads.findOne({filePath: pathRegex});
+        console.log(upload);
+        if (!upload) {
+            res.status(404).json({message: "Upload not found"});
+            return;
+        }
+
+        const coursesData = await fetchCourses();
+        console.log('Raw coursesData:', coursesData);
+        const courseExists = coursesData.result.entries.some(entry => entry.name === upload.ClassName);
+        if (!courseExists) {
+            await dbx.filesCreateFolderV2({path: `${BASE_PATH}/${upload.ClassName}`});
+        }
+
+        const weeksData = await fetchWeeksForCourse(upload.ClassName);
+        const weekExists = weeksData.result.entries.some(entry => entry.name === upload.WeekName);
+        if (!weekExists) {
+            await dbx.filesCreateFolderV2({path: `${BASE_PATH}/${upload.ClassName}/${upload.WeekName}`});
+        }
+
+        // Upload the file
+        const fileContents = fs.readFileSync(upload.filePath); 
+        await dbx.filesUpload({
+            path: `${BASE_PATH}/${upload.ClassName}/${upload.WeekName}/${upload.Title}`,
+            contents: fileContents
+        });
+        res.status(200).json({message: "Upload successful!"});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "An error occurred"});
     }
 });
-const upload = multer({ storage: storage });
 
 
 app.post('/register', upload.single('idFile'), async (req, res, next) => {
   const { email, password } = req.body; // Destructure email and password from the request body
-  const idFilePath = req.file.path; // Multer adds the 'file' object to the request, get the file path
+  const idFilePath = req.file.path;
   console.log(idFilePath)
   // Create a new pending user
   const newPendingUser = new PendingUser({
     email: email,
-    password: password, // Hash the password before saving, you can use libraries like bcrypt
+    password: password, 
     filePath: idFilePath
     });
     const existingPendingUser = await PendingUser.findOne({ email: req.body.email });

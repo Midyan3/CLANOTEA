@@ -22,7 +22,7 @@
                 <li>All uploads will be verified for appropriateness before being posted.</li>
             </ul>
         </div>
-        <form id="uploadForm">
+        <form id="uploadForm" action="/Upload" method="post" enctype="multipart/form-data">
             <label for="existingClass">Is the class you are uploading for already present?</label>
             <br>
             <input type="radio" id="yes" name="existingClass" value="yes" required>

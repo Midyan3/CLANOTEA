@@ -2,8 +2,11 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
   e.preventDefault();
   const errorDiv = document.getElementById("error");
   const password = document.getElementById("password").value;
+  const Upload = document.getElementsByClassName("Upload")[0];
   errorDiv.classList.add("show");
-  if (password === "admin") {
+  const pass =  'admin';
+  if (password === pass) {
+    Upload.style.display = "block";
     fetch("/getPendingUsers")
       .then((res) => res.json())
       .then((data) => {
@@ -177,4 +180,148 @@ function scrambleText() {
 
 function restoreText() {
   headElement.textContent = originalText;
+}
+
+document.querySelector(".Upload").addEventListener("click", fetchAndDisplayUploads);
+
+function fetchAndDisplayUploads(e) {
+    e.preventDefault();
+    const usersDiv = document.getElementById("pendingUsers");
+
+    fetch('/GetUploads')
+        .then(handleFetchResponse)
+        .then(displayUploads)
+        .catch(handleFetchError);
+}
+
+function handleFetchResponse(res) {
+    if (!res.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return res.json();
+}
+
+function displayUploads(data) {
+    const usersDiv = document.getElementById("pendingUsers");
+    usersDiv.innerHTML = ""; // Clear existing content
+    
+    data.forEach(upload => {
+        const uploadDiv = createUploadElement(upload);
+        usersDiv.appendChild(uploadDiv);
+    });
+}
+
+function createUploadElement(upload) { 
+  const filePathEncoded = encodeURIComponent(upload.filePath);
+  const div = document.createElement('div');
+  div.classList.add("Uploads");
+  div.id = filePathEncoded;
+  
+ // Creating labels and input boxes
+  const labels = ["ClassName", "WeekName", "Title", "Description"];
+  labels.forEach(label => {
+      const lblElement = document.createElement('label');
+      lblElement.htmlFor = label;
+      lblElement.innerText = `${label}:`;
+
+      const inputElement = document.createElement('input');
+      inputElement.type = "text";
+      inputElement.id = label;
+      inputElement.name = label;
+      inputElement.value = upload[label];
+      inputElement.readOnly = true;
+
+      div.appendChild(lblElement);
+      div.appendChild(inputElement);
+  });
+
+  // File display logic
+  const fileExt = upload.filePath.split('.').pop().toLowerCase();
+  let fileDisplayElement;
+  switch (fileExt) {
+      case 'pdf':
+          fileDisplayElement = document.createElement('embed');
+          fileDisplayElement.src = `./${upload.filePath}`;
+          fileDisplayElement.type = "application/pdf";
+          fileDisplayElement.width = "100%";
+          fileDisplayElement.height = "400px";
+          break;
+      case 'mp4':
+          fileDisplayElement = document.createElement('video');
+          fileDisplayElement.width = "320";
+          fileDisplayElement.height = "240";
+          fileDisplayElement.controls = true;
+          
+          const sourceElement = document.createElement('source');
+          sourceElement.src = `./${upload.filePath}`;
+          sourceElement.type = "video/mp4";
+          fileDisplayElement.appendChild(sourceElement);
+          break;
+      case 'docx':
+      default:
+          fileDisplayElement = document.createElement('a');
+          fileDisplayElement.href = `./${upload.filePath}`;
+          fileDisplayElement.target = "_blank";
+          fileDisplayElement.innerText = fileExt === 'docx' ? "Download DOCX" : "Download File";
+  }
+  div.appendChild(fileDisplayElement);
+
+  // Create approve and reject buttons
+  const approveBtn = document.createElement('button');
+  approveBtn.classList.add("Approve");
+  approveBtn.textContent = "Approve";
+  approveBtn.addEventListener("click", () => approveUpload(filePathEncoded));
+
+  const rejectBtn = document.createElement('button');
+  rejectBtn.classList.add("Reject");
+  rejectBtn.textContent = "Reject";
+  rejectBtn.addEventListener("click", () => rejectUpload(filePathEncoded));
+
+  div.appendChild(approveBtn);
+  div.appendChild(rejectBtn);
+  
+  return div;
+}
+
+
+function approveUpload(filePath) {
+    const bodyData = {
+        filePath: decodeURIComponent(filePath)
+    };
+
+    fetch("/approveUpload", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    })
+    .then(handleFetchResponse)
+    .then(data => {
+        alert(data.message); // assuming your server sends a message
+    })
+    .catch(handleFetchError);
+}
+
+function rejectUpload(filePath) {
+    const bodyData = {
+        filePath: decodeURIComponent(filePath)
+    };
+
+    fetch("/rejectUpload", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    })
+    .then(handleFetchResponse)
+    .then(data => {
+        alert(data.message); // assuming your server sends a message on rejection too
+    })
+    .catch(handleFetchError);
+}
+
+function handleFetchError(error) {
+    console.error('There was a problem with the fetch operation:', error.message);
 }
