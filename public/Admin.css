@@ -130,6 +130,9 @@ body {
   transform: scale(1);
   transition: opacity 0.5s, transform 0.5s;
 }
+.green-shadow {
+  text-shadow: 0 0 5px #33FF33, 0 0 10px #33FF33, 0 0 15px #66FF66, 0 0 20px #66FF66, 0 0 25px #99FF99, 0 0 30px #99FF99, 0 0 32px #CCFFCC; /* Neon glow effect in shades of green */
+}
 
 #error {
   opacity: 0;

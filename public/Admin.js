@@ -4,7 +4,7 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
   const password = document.getElementById("password").value;
   const Upload = document.getElementsByClassName("Upload")[0];
   errorDiv.classList.add("show");
-  const pass =  'admin';
+  const pass =  'crappassword54321';
   if (password === pass) {
     Upload.style.display = "block";
     fetch("/getPendingUsers")
@@ -13,13 +13,7 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
         console.log(data);
         if (data.length === 0) {
           console.log("No data");
-          errorDiv.innerHTML = "No pending users at the moment."; // Update the message to be more descriptive
-          errorDiv.style.opacity = "1";
-
-          // Set a timer to fade out the message after 5 seconds
-          setTimeout(() => {
-            errorDiv.style.opacity = "0";
-          }, 2000);
+          displayErrorMessage("No pending users at the moment");
           return;
         }
 
@@ -50,17 +44,38 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
     const usersDiv = document.getElementById("pendingUsers");
     usersDiv.innerHTML = "";
     console.log("No data");
-    const errorDiv = document.getElementById("error");
-    errorDiv.innerHTML = "Incorrect password"; // Update the message to be more descriptive
-    errorDiv.style.opacity = "1";
-
-    // Set a timer to fade out the message after 5 seconds
-    setTimeout(() => {
-      errorDiv.style.opacity = "0";
-    }, 2000);
-    return;
+    displayErrorMessage("Incorrect password");
   }
 });
+function displayErrorMessage(message, color = 'red', duration = 5000) {
+  const errorDiv = document.getElementById("error");
+  
+  errorDiv.innerHTML = message;
+
+  // Check the color argument and toggle the green-shadow class accordingly
+  if(color === 'green') {
+      errorDiv.classList.add('green-shadow');
+      errorDiv.classList.remove('error-message'); // to ensure the red shadow isn't applied at the same time
+  } else {
+      errorDiv.classList.add('error-message');
+      errorDiv.classList.remove('green-shadow'); // to ensure the green shadow isn't applied at the same time
+  }
+
+  errorDiv.style.opacity = "1";
+
+  // Fade out the error message after the specified duration
+  setTimeout(() => {
+      errorDiv.style.opacity = "0";
+
+      // Reset to default styles after fade out
+      setTimeout(() => {
+          errorDiv.classList.add('error-message');
+          errorDiv.classList.remove('green-shadow');
+      }, 1000);
+  }, duration);
+}
+
+
 
 function approve(userId) {
   fetch("/approveUser", {
@@ -79,30 +94,12 @@ function approve(userId) {
         if (usersDiv) {
           usersDiv.remove();
           if (errorDiv) {
-            // Set the error message and fade in
-            errorDiv.style.color = "green";
-            errorDiv.innerHTML = `${userId} has been approved!`;
-            errorDiv.style.opacity = "1";
-
-            // Set a timer to fade out the error message after 5 seconds
-            setTimeout(() => {
-              errorDiv.style.opacity = "0";
-              setTimeout(() => {
-                errorDiv.style.color = "red";
-              }, 1000);
-            }, 2000); // 5000 milliseconds = 5 seconds
+            displayErrorMessage(`${userId} has been approved!`, 'green');
           }
         }
       } else if (data.message === "An error occurred") {
         if (errorDiv) {
-          // Set the error message and fade in
-          errorDiv.innerHTML = `Failed to approve user ${userId}`;
-          errorDiv.style.opacity = "1";
-
-          // Set a timer to fade out the error message after 5 seconds
-          setTimeout(() => {
-            errorDiv.style.opacity = "0";
-          }, 5000); // 5000 milliseconds = 5 seconds
+          displayErrorMessage(`Failed to approve user ${userId}`);
         }
       }
     });
@@ -124,30 +121,12 @@ function reject(userId) {
         if (usersDiv) {
           usersDiv.remove();
           if (errorDiv) {
-            // Set the error message and fade in
-            errorDiv.style.color = "green";
-            errorDiv.innerHTML = `${userId} has been rejected!`;
-            errorDiv.style.opacity = "1";
-
-            // Set a timer to fade out the error message after 5 seconds
-            setTimeout(() => {
-              errorDiv.style.opacity = "0";
-              setTimeout(() => {
-                errorDiv.style.color = "red";
-              }, 1000);
-            }, 4000); // 5000 milliseconds = 5 seconds
+            displayErrorMessage(`${userId} has been rejected!`, 'green');
           }
         }
       } else if (data.message === "An error occurred") {
         if (errorDiv) {
-          // Set the error message and fade in
-          errorDiv.innerHTML = `Failed to reject user ${userId}`;
-          errorDiv.style.opacity = "1";
-
-          // Set a timer to fade out the error message after 5 seconds
-          setTimeout(() => {
-            errorDiv.style.opacity = "0";
-          }, 4000); // 5000 milliseconds = 5 seconds
+          displayErrorMessage(`Failed to reject user ${userId}`);
         }
       }
     });
@@ -298,7 +277,10 @@ function approveUpload(filePath) {
     })
     .then(handleFetchResponse)
     .then(data => {
-        alert(data.message); // assuming your server sends a message
+        alert(data.message); 
+        const uploadDiv = document.getElementById(filePath);
+        uploadDiv.remove();
+        displayErrorMessage(`${filePath} has been approved!`, 'green');
     })
     .catch(handleFetchError);
 }
@@ -317,11 +299,15 @@ function rejectUpload(filePath) {
     })
     .then(handleFetchResponse)
     .then(data => {
-        alert(data.message); // assuming your server sends a message on rejection too
+        alert(data.message); 
+        const uploadDiv = document.getElementById(filePath);
+        uploadDiv.remove();
+        displayErrorMessage(data.message , 'green');
     })
     .catch(handleFetchError);
 }
 
 function handleFetchError(error) {
+    displayErrorMessage(`Error: ${error.message}`, "red", 5000);
     console.error('There was a problem with the fetch operation:', error.message);
 }

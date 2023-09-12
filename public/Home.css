@@ -10,8 +10,8 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    background: #f5f5f7; /* subtle gray background */
-    color: #333; /* deep gray text */
+    background: #f5f5f7; 
+    color: #333; 
     line-height: 1.6;
 }
 .note {
@@ -75,6 +75,14 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     display: block;
 }
+#searchBar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
 
 .card:hover, .week-card:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);

@@ -250,6 +250,18 @@ app.post('/rejectUser', async (req, res) => {
     }
 });
 
+app.post('/rejectUpload', async (req, res) => {
+    try{
+        Path = req.body.filePath;
+        await Uploads.deleteOne({filePath: Path});
+        res.status(200).json({message: "Upload rejected successfully"});
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message: "An error occurred"});
+    }
+
+});
+
 app.post('/approveUpload', async (req, res) => {
     try {
         let path = req.body.filePath;
@@ -279,10 +291,12 @@ app.post('/approveUpload', async (req, res) => {
 
         // Upload the file
         const fileContents = fs.readFileSync(upload.filePath); 
+        const fileExtension = "." + path.split('.').pop().toLowerCase();
         await dbx.filesUpload({
-            path: `${BASE_PATH}/${upload.ClassName}/${upload.WeekName}/${upload.Title}`,
+            path: `${BASE_PATH}/${upload.ClassName}/${upload.WeekName}/${upload.Title}${fileExtension}`,
             contents: fileContents
         });
+        upload.deleteOne();
         res.status(200).json({message: "Upload successful!"});
 
     } catch (error) {
@@ -332,7 +346,7 @@ app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
 
-app.get('/GetVideo', async (req, res) => {
+app.get('/GetContent', async (req, res) => {
     const path = req.query.path;
     const apiUrl = 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
     console.log("Path:", path);
