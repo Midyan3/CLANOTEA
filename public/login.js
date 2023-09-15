@@ -16,10 +16,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         fetch('/login', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: 'same-origin'
         })
         .then(res => {
             // Ensure the animation plays for at least 1 second (1000 milliseconds)

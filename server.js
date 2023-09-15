@@ -5,18 +5,69 @@ const path = require('path');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const Dropbox = require('dropbox');
+const cors = require('cors');
 const axios = require('axios');
+const { compareSync } = require('bcrypt');
 require('dotenv').config();
+const app = express();
+app.use(cors({
+    origin: 'http://localhost:3000', 
+    credentials: true
+}));
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/');
     },
     filename: function (req, file, cb) {
         const now = new Date().toISOString();
-        const date = now.replace(/:/g, '-');  // replace colons with hyphens
+        const date = now.replace(/:/g, '-');  
         cb(null, date + file.originalname);
     }
 });
+
+app.use(session({
+    secret: "mytestsecret",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 1000 
+    }
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/Upload.html', Authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Upload.html'));
+});
+app.get('/Home.html', Authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Home.html'));
+});
+
+app.get('/Upload.html', Authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Upload.html'));
+});
+
+
+app.get('/HomeScreen.html', Authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Home.html'));
+});
+
+function Authentication(req, res, next) {
+    console.log('Session ID:', req.sessionID);
+    console.log('Session data:', req.session);
+    console.log('isAuthenticated:', req.session.isAuthenticated);
+    
+    if (req.session.isAuthenticated) {
+        return next();  
+    } else {
+        res.redirect('/Login.html');  
+    }
+}
+
 
 const upload = multer({ storage: storage });
 // Constants and configurations
@@ -25,7 +76,7 @@ const BASE_PATH = process.env.BASE_PATH;
 const ACCESS_TOKEN = process.env.API_KEY;
 console.log(process.env.API_KEY);
 
-const app = express();
+
 app.use('/uploads', express.static('uploads'));
 
 if (!fs.existsSync('./uploads')) {
@@ -165,9 +216,15 @@ app.post('/login', async (req, res) => {
     const isMatch = user && password === user.password ? true : false;
     if (isMatch) {
         req.session.isAuthenticated = true;
-        req.session.userId = user._id;
-        return res.status(200).json({ message: 'Login successful' });
-    } else {
+        req.session.save(err => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).json({ message: 'Internal Server Error' });
+            }
+            return res.status(200).json({ message: 'Login successful' });
+        });
+        console.log('Session ID:', req.sessionID);
+    }else {
         return res.status(400).json({ message: 'Incorrect Email/Password' });
     }
 });
@@ -376,6 +433,8 @@ app.get('/GetContent', async (req, res) => {
         return res.status(500).json({ message: 'An error occurred' });
     }
 });
+
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGOL, {
