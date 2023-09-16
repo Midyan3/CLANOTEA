@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
   const registerButton = document.querySelector(".submit-button");
 
@@ -105,5 +106,38 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("There was a problem with the fetch:", error);
     }
+  });
+});
+
+document.getElementById('home-button').addEventListener('click', function(e) {
+  e.preventDefault();  // Prevent default behavior of link
+
+  // Fetch the token from local storage
+  const token = localStorage.getItem('token');
+
+  // If there's no token, redirect to login
+  if (!token) {
+      window.location.href = '/Login.html';
+      return;
+  }
+
+  // Make an AJAX request to validate the token
+  fetch('/validate-token', {
+      method: 'POST',
+      headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+      }
+  }).then(response => {
+     
+      if (response.status === 200) {
+        console.log("token validated");
+        window.location.href = '/Home.html';
+      } else {
+        console.log("failed to validate token");
+        window.location.href = '/Login.html';
+      }
+  }).catch(error => {
+      console.error('Error:', error);
   });
 });

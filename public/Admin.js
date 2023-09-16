@@ -10,9 +10,7 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
     fetch("/getPendingUsers")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.length === 0) {
-          console.log("No data");
           displayErrorMessage("No pending users at the moment");
           return;
         }
@@ -21,7 +19,6 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
         usersDiv.innerHTML = ""; // Clear the usersDiv before appending new data
 
         data.forEach((user, index) => {
-          console.log(user.filePath);
           usersDiv.innerHTML += `
               <div class="card" id=${user.email}>   
                   <p>
@@ -43,7 +40,6 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
   } else {
     const usersDiv = document.getElementById("pendingUsers");
     usersDiv.innerHTML = "";
-    console.log("No data");
     displayErrorMessage("Incorrect password");
   }
 });
@@ -77,7 +73,7 @@ function displayErrorMessage(message, color = 'red', duration = 5000) {
 
 
 
-function approve(userId) {
+function approve(userId) {1
   fetch("/approveUser", {
     method: "POST",
     headers: {
@@ -277,7 +273,6 @@ function approveUpload(filePath) {
     })
     .then(handleFetchResponse)
     .then(data => {
-        alert(data.message); 
         const uploadDiv = document.getElementById(filePath);
         uploadDiv.remove();
         displayErrorMessage(`${filePath} has been approved!`, 'green');
@@ -299,7 +294,6 @@ function rejectUpload(filePath) {
     })
     .then(handleFetchResponse)
     .then(data => {
-        alert(data.message); 
         const uploadDiv = document.getElementById(filePath);
         uploadDiv.remove();
         displayErrorMessage(data.message , 'green');

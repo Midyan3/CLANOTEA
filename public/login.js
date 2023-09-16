@@ -16,36 +16,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         fetch('/login', {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password }),
-            credentials: 'same-origin'
+            body: JSON.stringify({ email, password })
         })
-        .then(res => {
+        .then(res => res.json()) // Parse the JSON response
+        .then(data => {
             // Ensure the animation plays for at least 1 second (1000 milliseconds)
             const elapsedTime = Date.now() - loginStartTime;
             const delay = Math.max(0, 1000 - elapsedTime);
 
-            setTimeout(() => {
-                // Hide the "Logging in..." animation
-                hideLoginAnimation();
-
-                if (res.status === 400) {
-                    showError();
-                } else if (res.status === 200) {
-                    showSuccess();
-                    setTimeout(() => {
-                        window.location.href = '/Home.html'; 
-                    }, 2500);
-                }
-            }, delay);
-
-            return res.json();
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(data);
+                }, delay);
+            });
         })
         .then(data => {
+            hideLoginAnimation();
             console.log(data);
+            if (data && data.token) {
+                localStorage.setItem('token', data.token);
+                showSuccess();
+                setTimeout(() => {
+                    window.location.href = '/Home.html'; 
+                }, 2500);
+            } else if (data.message) {
+                showError(data.message);
+            }
         })
         .catch(err => {
             hideLoginAnimation();

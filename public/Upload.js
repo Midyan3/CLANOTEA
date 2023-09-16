@@ -19,7 +19,7 @@ document.querySelector(".submit-button").addEventListener("click", function (eve
     formData.append("file", file);
     
     
-    if(formData.get("ClassName") === null|| Title === "" || description === "" || file === undefined){
+    if(formData.get("ClassName") === null|| Title === "" || description === "" || file === undefined || WeekName === ""){
         alert("Please fill out all fields");
         return;
     }
@@ -66,8 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((courses) => {
                 select[0].innerHTML = '';
                 courses.forEach((courses) => {
-
-                    console.log(courses.name);
                     select[0].innerHTML += `<option class="SelectClass" value="${courses.name}">${courses.name}</option>`;
                 });
             });
@@ -84,3 +82,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function calculateWeeksSince(startDate) {
+    const today = new Date();
+    const timeDifference = today - startDate;
+    const daysDifference = timeDifference / (1000 * 3600 * 24); 
+    return Math.ceil(daysDifference / 7);
+}
+
+function populateWeekDropdown(weeks) {
+    const weekDropdown = document.getElementById('week');
+    for (let i = 1; i <= weeks; i++) {
+        const option = document.createElement('option');
+        option.value = `Week ${i}`;
+        option.textContent = `Week ${i}`;
+        weekDropdown.appendChild(option);
+    }
+}
+const classStartDate = new Date('2023-08-25'); 
+const weeksSinceStart = calculateWeeksSince(classStartDate);
+populateWeekDropdown(weeksSinceStart);

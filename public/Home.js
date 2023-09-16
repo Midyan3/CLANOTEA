@@ -168,3 +168,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
     });
   });
+  document.getElementById("Log-out").addEventListener("click", function(e) {
+    e.preventDefault();
+    fetch('/logout', {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message === 'Logged out successfully') {
+            window.location.href = '/Login.html';
+        }
+    })
+    .catch(err => console.error("Error during logout:", err));
+});

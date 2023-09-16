@@ -5,11 +5,14 @@ const path = require('path');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const Dropbox = require('dropbox');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const axios = require('axios');
 const { compareSync } = require('bcrypt');
 require('dotenv').config();
 const app = express();
+const jwt = require('jsonwebtoken'); 
+app.use(cookieParser());
 app.use(cors({
     origin: 'http://localhost:3000', 
     credentials: true
@@ -25,24 +28,10 @@ const storage = multer.diskStorage({
     }
 });
 
-app.use(session({
-    secret: "mytestsecret",
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        secure: false,
-        sameSite: 'none',
-        maxAge: 24 * 60 * 60 * 1000 
-    }
-}));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/Upload.html', Authentication, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Upload.html'));
-});
+
 app.get('/Home.html', Authentication, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Home.html'));
 });
@@ -51,22 +40,35 @@ app.get('/Upload.html', Authentication, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Upload.html'));
 });
 
-
-app.get('/HomeScreen.html', Authentication, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Home.html'));
+app.get('/Admin.html', Authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Admin.html'));
 });
 
+
 function Authentication(req, res, next) {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session data:', req.session);
-    console.log('isAuthenticated:', req.session.isAuthenticated);
-    
-    if (req.session.isAuthenticated) {
-        return next();  
-    } else {
-        res.redirect('/Login.html');  
+    let token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+    if (!token) {
+        token = req.cookies.token;
     }
+
+    if (!token) {
+        return res.redirect('/Login.html'); // Redirect them to the login page if no token is found
+    }
+
+    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.redirect('/Login.html');
+        }
+        req.user = decoded;
+        next();
+    });
 }
+
+app.post('/validate-token', Authentication, async (req, res) => {
+    res.status(200).json({ message: 'Token is valid' });
+});
+
 
 
 const upload = multer({ storage: storage });
@@ -83,6 +85,10 @@ if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
 }
 
+app.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/Login.html');
+});
 
 var dbx = new Dropbox.Dropbox({ accessToken: ACCESS_TOKEN, fetch });
 
@@ -215,25 +221,14 @@ app.post('/login', async (req, res) => {
     }
     const isMatch = user && password === user.password ? true : false;
     if (isMatch) {
-        req.session.isAuthenticated = true;
-        req.session.save(err => {
-            if (err) {
-                console.error("Error saving session:", err);
-                return res.status(500).json({ message: 'Internal Server Error' });
-            }
-            return res.status(200).json({ message: 'Login successful' });
-        });
-        console.log('Session ID:', req.sessionID);
-    }else {
+        const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // 3600000 milliseconds = 1 hour
+        return res.status(200).json({ message: 'Login successful', token: token });
+    }
+     else {
         return res.status(400).json({ message: 'Incorrect Email/Password' });
     }
 });
-
-
-app.get('/admin', (req, res) => {
-    res.sendFile(__dirname + 'public/Admin.html');
-});
-
 
 app.get('/getPendingUsers', async (req, res) => {
     const users = await PendingUser.find({});
@@ -391,13 +386,6 @@ app.post('/register', upload.single('idFile'), async (req, res, next) => {
   }
 });
 
-
-
-app.get('/Home.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Home.html'));
-});
-
-
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
@@ -433,8 +421,11 @@ app.get('/GetContent', async (req, res) => {
         return res.status(500).json({ message: 'An error occurred' });
     }
 });
-
-
+app.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully' });
+});
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGOL, {
