@@ -4,45 +4,61 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
   const password = document.getElementById("password").value;
   const Upload = document.getElementsByClassName("Upload")[0];
   errorDiv.classList.add("show");
-  const pass =  'crappassword54321';
-  if (password === pass) {
-    Upload.style.display = "block";
-    fetch("/getPendingUsers")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.length === 0) {
-          displayErrorMessage("No pending users at the moment");
-          return;
-        }
+  
+  fetch("/AdminPassword", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ password }),
+  })
+  .then((res) => res.json()) 
+  .then((data) => {
+    if(data.isValid) {  
+      Upload.style.display = "block";
+      fetch("/getPendingUsers")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.length === 0) {
+            displayErrorMessage("No pending users at the moment");
+            return;
+          }
+          const usersDiv = document.getElementById("pendingUsers");
+          usersDiv.innerHTML = ""; // Clear the exisiting data first. Problem when not cleared. This is reminder.
 
-        const usersDiv = document.getElementById("pendingUsers");
-        usersDiv.innerHTML = ""; // Clear the usersDiv before appending new data
-
-        data.forEach((user, index) => {
-          usersDiv.innerHTML += `
-              <div class="card" id=${user.email}>   
-                  <p>
-                      ${user.email} 
-                      <img src="./${user.filePath}"  class="judgement" alt="N/A" width="100"> <!-- Display the user's ID picture -->
-                      <button class="Approve" onclick="approve('${user.email}')">Approve</button> 
-                      <button class="Reject" onclick="reject('${user.email}')">Reject</button>
-                  </p>
-              </div>`;
-          setTimeout(() => {
-            const userDiv = document.getElementById(user.email);
-            if (userDiv) {
-              userDiv.style.opacity = "1";
-              userDiv.style.transform = "translateY(0)";
-            }
-          }, index * 300);
+          data.forEach((user, index) => {
+            usersDiv.innerHTML += `
+                <div class="card" id=${user.email}>   
+                    <p>
+                        ${user.email} 
+                        <img src="./${user.filePath}"  class="judgement" alt="N/A" width="100"> <!-- Display the user's ID picture -->
+                        <button class="Approve" onclick="approve('${user.email}')">Approve</button> 
+                        <button class="Reject" onclick="reject('${user.email}')">Reject</button>
+                    </p>
+                </div>`;
+            setTimeout(() => {
+              const userDiv = document.getElementById(user.email);
+              if (userDiv) {
+                userDiv.style.opacity = "1";
+                userDiv.style.transform = "translateY(0)";
+              }
+            }, index * 300);
+          });
         });
-      });
-  } else {
+    } else {
+      const usersDiv = document.getElementById("pendingUsers");
+      usersDiv.innerHTML = "";
+      document.querySelector(".Upload").style.display = "none";
+      displayErrorMessage("Incorrect password");
+    }
+  })
+  .catch((err) => {
     const usersDiv = document.getElementById("pendingUsers");
     usersDiv.innerHTML = "";
-    displayErrorMessage("Incorrect password");
-  }
+    displayErrorMessage("Error: " + err);
+  });
 });
+
 function displayErrorMessage(message, color = 'red', duration = 5000) {
   const errorDiv = document.getElementById("error");
   
@@ -51,10 +67,10 @@ function displayErrorMessage(message, color = 'red', duration = 5000) {
   // Check the color argument and toggle the green-shadow class accordingly
   if(color === 'green') {
       errorDiv.classList.add('green-shadow');
-      errorDiv.classList.remove('error-message'); // to ensure the red shadow isn't applied at the same time
+      errorDiv.classList.remove('error-message'); 
   } else {
       errorDiv.classList.add('error-message');
-      errorDiv.classList.remove('green-shadow'); // to ensure the green shadow isn't applied at the same time
+      errorDiv.classList.remove('green-shadow');
   }
 
   errorDiv.style.opacity = "1";

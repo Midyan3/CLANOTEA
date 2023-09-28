@@ -29,13 +29,14 @@ document.querySelector(".submit-button").addEventListener("click", function (eve
     })
     .then((response) => {
         if (!response.ok) {
+            alert("Something went wrong. Please try again later.");
             throw new Error('Network response was not ok');
         }
         return response.json();
     })
     .then((data) => {
         if(data.message === "File uploaded successfully"){
-            alert("thank you for uploading");
+            alert("File uploaded successfully");
         }
     })
     .catch((error) => {

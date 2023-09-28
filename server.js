@@ -75,7 +75,7 @@ const upload = multer({ storage: storage });
 // Constants and configurations
 const PORT = 3000;
 const BASE_PATH = process.env.BASE_PATH;
-const ACCESS_TOKEN = process.env.API_KEY;
+let ACCESS_TOKEN = process.env.API_KEY;
 console.log(process.env.API_KEY);
 
 
@@ -119,19 +119,56 @@ const Uploads = mongoose.model('Uploads', Upload);
 
 
 // Dropbox utility functions
-function fetchCourses() {
-    return dbx.filesListFolder({ path: BASE_PATH });
+// Assume this function gets a new token from Dropbox
+async function refreshDropboxToken() {
+    try {
+        const response = await axios.post('https://api.dropbox.com/oauth2/token', null, {
+            params: {
+                refresh_token: process.env.REFRESH_TOKEN,
+                grant_type: 'refresh_token',
+                client_id: process.env.APP_KEY,
+                client_secret: process.env.APP_SECRET
+            }
+        });
+        const { access_token } = response.data;
+        ACCESS_TOKEN = access_token;
+        dbx = new Dropbox.Dropbox({ accessToken: ACCESS_TOKEN, fetch });
+        console.log("New access token:", ACCESS_TOKEN);
+    } catch (error) {
+        console.error('Error refreshing Dropbox token:', error);
+        throw error;
+    }
 }
 
+// Wrapper function to handle Dropbox API calls
+async function handleDropboxRequest(apiCall) {
+    try {
+        return await apiCall();
+    } catch (error) {
+        console.error('Error:', error.message);  // Log the error
+        if (error.error && error.error.error_summary.includes('expired_access_token')) {
+            console.log("Token expired. Refreshing token...");
+            await refreshDropboxToken();
+            return await apiCall();
+        } else {
+            throw error;
+        }
+    }
+}
+
+// Update your existing Dropbox utility functions to use the wrapper
+function fetchCourses() {
+    return handleDropboxRequest(() => dbx.filesListFolder({ path: BASE_PATH }));
+}
 
 function fetchWeeksForCourse(courseName) {
-    return dbx.filesListFolder({ path: `${BASE_PATH}/${courseName}` });
+    return handleDropboxRequest(() => dbx.filesListFolder({ path: `${BASE_PATH}/${courseName}` }));
 }
-
 
 function fetchContentForWeek(courseName, weekName) {
-    return dbx.filesListFolder({ path: `${BASE_PATH}/${courseName}/${weekName}` });
+    return handleDropboxRequest(() => dbx.filesListFolder({ path: `${BASE_PATH}/${courseName}/${weekName}` }));
 }
+
 function processEntries(entries) {
   if (entries && entries.length > 0) {
       entries.forEach(entry => {
@@ -195,6 +232,14 @@ app.post('/Upload', upload.single('file'), (req, res) => {
         return res.status(500).json({message: "Failed to upload. Error: " + error});
     } 
 });
+app.post('/AdminPassword', async (req, res) => {
+    const password = req.body.password;
+    if(password === process.env.ADMIN_PASSWORD){
+        res.json({ isValid: true });
+    } else {
+        res.json({ isValid: false });
+    }
+});
 
 // Middleware
 app.use(express.json());
@@ -233,27 +278,6 @@ app.post('/login', async (req, res) => {
 app.get('/getPendingUsers', async (req, res) => {
     const users = await PendingUser.find({});
     res.json(users);
-});
-app.get('/image/:filename', (req, res) => {
-  // Add any authentication or validation logic here
-  // to ensure that the user should have access to the image.
-
-  const filename = req.params.filename;
-  const filepath = path.join(__dirname, 'uploads', filename);
-
-  fs.stat(filepath, (err, stat) => {
-      if (err) {
-          if (err.code === 'ENOENT') {
-              // File not found
-              res.status(404).send('Not Found');
-          } else {
-              res.status(500).send('Internal Server Error');
-          }
-      } else {
-          // Send the file
-          res.sendFile(filepath);
-      }
-  });
 });
 
 app.get('/GetUploads', async (req, res) => {
@@ -327,7 +351,7 @@ app.post('/approveUpload', async (req, res) => {
             res.status(404).json({message: "Upload not found"});
             return;
         }
-
+    
         const coursesData = await fetchCourses();
         console.log('Raw coursesData:', coursesData);
         const courseExists = coursesData.result.entries.some(entry => entry.name === upload.ClassName);
@@ -348,15 +372,30 @@ app.post('/approveUpload', async (req, res) => {
             path: `${BASE_PATH}/${upload.ClassName}/${upload.WeekName}/${upload.Title}${fileExtension}`,
             contents: fileContents
         });
+        fs.unlinkSync(upload.filePath);
         upload.deleteOne();
         res.status(200).json({message: "Upload successful!"});
-
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "An error occurred"});
     }
 });
+/*async function getTokens() {
+    const response = await axios.post('https://api.dropbox.com/oauth2/token', null, {
+        params: {
+            grant_type: 'authorization_code',
+            code: process.env.CODE,
+            client_id: process.env.APP_KEY,
+            client_secret: process.env.APP_SECRET,
+            redirect_uri: 'http://localhost:3000/Login.html',
+        }
+    });
+    console.log('Access Token:', response.data.access_token);
+    console.log('Refresh Token:', response.data);
+}
 
+getTokens();
+*/
 
 app.post('/register', upload.single('idFile'), async (req, res, next) => {
   const { email, password } = req.body; // Destructure email and password from the request body

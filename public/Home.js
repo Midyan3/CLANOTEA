@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   
                                     weekCard.onclick = function () {
                                         // Load content for the selected week
+                                        document.getElementById("notes-section").innerHTML = "";
+                                        document.getElementById("videos-section").innerHTML = "";
                                         fetch(`/api/courses/${course.name}/weeks/${week.name}/content`)
                                             .then((response) => response.json())
                                             .then(async (content) => {

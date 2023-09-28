@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         })
         .then(data => {
             hideLoginAnimation();
-            console.log(data);
             if (data && data.token) {
                 localStorage.setItem('token', data.token);
                 showSuccess();

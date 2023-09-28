@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const accountErrorDiv = document.getElementById("Account-error"); // Get the div where you want to display the error
 
       if (response.status === 200) {
-        console.log("Account created successfully!");
         const loadingBarContainer = document.querySelector(
           ".loading-bar-container"
         );
@@ -76,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const interval = setInterval(() => {
           if (width >= 100) {
             clearInterval(interval);
-            console.log("Done!");
             percentageText.innerText = "0%";
             loadingBarContainer.style.display = "none";
             window.location.href = "/Success.html";
@@ -110,18 +108,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.getElementById('home-button').addEventListener('click', function(e) {
-  e.preventDefault();  // Prevent default behavior of link
-
-  // Fetch the token from local storage
+  e.preventDefault();  
   const token = localStorage.getItem('token');
 
-  // If there's no token, redirect to login
   if (!token) {
       window.location.href = '/Login.html';
       return;
   }
 
-  // Make an AJAX request to validate the token
   fetch('/validate-token', {
       method: 'POST',
       headers: {
@@ -131,10 +125,8 @@ document.getElementById('home-button').addEventListener('click', function(e) {
   }).then(response => {
      
       if (response.status === 200) {
-        console.log("token validated");
         window.location.href = '/Home.html';
       } else {
-        console.log("failed to validate token");
         window.location.href = '/Login.html';
       }
   }).catch(error => {
