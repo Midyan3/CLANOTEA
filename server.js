@@ -259,21 +259,26 @@ app.get('/', (req, res) => {
 
 
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email });
-    if (!user) {
-        return res.status(400).json({ message: 'Email not found' });
-    }
-    const isMatch = user && password === user.password ? true : false;
-    if (isMatch) {
-        const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // 3600000 milliseconds = 1 hour
-        return res.status(200).json({ message: 'Login successful', token: token });
-    }
-     else {
-        return res.status(400).json({ message: 'Incorrect Email/Password' });
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(400).json({ message: 'Email not found' });
+        }
+        const isMatch = user && password === user.password ? true : false;
+        if (isMatch) {
+            const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
+            res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // 3600000 milliseconds = 1 hour
+            return res.status(200).json({ message: 'Login successful', token: token });
+        } else {
+            return res.status(400).json({ message: 'Incorrect Email/Password' });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'An error occurred' });
     }
 });
+
 
 app.get('/getPendingUsers', async (req, res) => {
     const users = await PendingUser.find({});
