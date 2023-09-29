@@ -73,7 +73,7 @@ app.post('/validate-token', Authentication, async (req, res) => {
 
 const upload = multer({ storage: storage });
 // Constants and configurations
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const BASE_PATH = process.env.BASE_PATH;
 let ACCESS_TOKEN = process.env.API_KEY;
 console.log(process.env.API_KEY);
