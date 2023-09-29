@@ -426,7 +426,7 @@ app.post('/register', upload.single('idFile'), async (req, res, next) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+app.listen(process.env.PORT ||  PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
 
