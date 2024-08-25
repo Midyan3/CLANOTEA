@@ -3,9 +3,9 @@
 Hey there! Welcome to CLANOTEA. This is a cool spot where students can easily share stuff like notes, videos, and pictures to help each other out. If you're curious about how it's built, you're in the right place because this is where I've put all the code.
 
 I built this site using some pretty handy tools:
-- **Dropbox API** (that's where all the files go, but it's a paid thing)
-- **MongoDB** (this is where all the user info stays safe)
-- **Express.js and Node.js** (they do all the heavy lifting in the background)
+- **Dropbox API**
+- **MongoDB** 
+- **Express.js and Node.js** 
 - Here is the link to signup https://clanotea-57b3fd39a762.herokuapp.com/Web.html
 
 Right now, I've set it up so you need an ID to get in and use the site. But don't worry, I'm planning to change that soon. If you want to check things out before then, just send over a pic with a white background, and that'll work for now. Also, you might see a message saying you'll get an email after you finish signing up. Just a heads-up, that feature isn't working right now, so please disregard it.
