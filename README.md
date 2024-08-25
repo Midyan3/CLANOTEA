@@ -36,3 +36,8 @@ Remember, I'm always making changes and trying to make things better. So if you'
 Thanks for stopping by CLANOTEA!
 
 P.S. Keep an eye out for when I remove the ID thing. It's gonna be way easier to get in.
+
+Some previews. There are no classes in the files but are there on the website
+![Animation](https://github.com/user-attachments/assets/27e35f51-19d5-431f-ba47-38aba23b1aab)
+![Animation](https://github.com/user-attachments/assets/3c954ebf-b6bc-4a3e-9691-46b527172734)
+
